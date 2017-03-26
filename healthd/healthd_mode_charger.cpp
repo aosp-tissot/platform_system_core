@@ -65,7 +65,7 @@ char *locale;
 
 #define BATTERY_UNKNOWN_TIME    (2 * MSEC_PER_SEC)
 #define POWER_ON_KEY_TIME       (2 * MSEC_PER_SEC)
-#define UNPLUGGED_SHUTDOWN_TIME (1 * MSEC_PER_SEC)
+#define UNPLUGGED_SHUTDOWN_TIME (5 * MSEC_PER_SEC)
 
 #define BATTERY_FULL_THRESH     95
 
@@ -156,7 +156,7 @@ static struct frame batt_anim_frames[] = {
     {
         .disp_time = 750,
         .min_capacity = 80,
-        .level_only = true,
+        .level_only = false,
         .surface = NULL,
     },
     {
@@ -612,6 +612,7 @@ static void process_key(struct charger *charger, int code, int64_t now)
                    accordingly. */
                 if (property_get_bool("ro.enable_boot_charger_mode", false)) {
                     LOGW("[%" PRId64 "] booting from charger mode\n", now);
+                    healthd_board_mode_charger_set_backlight(false);
                     property_set("sys.boot_from_charger_mode", "1");
                 } else {
                     if (charger->batt_anim->capacity >= charger->boot_min_cap) {
